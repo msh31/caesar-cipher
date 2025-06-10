@@ -1,37 +1,48 @@
 #include <stdio.h>
-#include <string.h>
+#include <ctype.h>
 
 void perform_shift(int count, char *text, int mode)
 {
-    printf("TEXT: %s", text); //&s is for characters / strings 
-    printf("MODE=%d\n", mode);
-    printf("SHIFT=%d", count);
+    // printf("TEXT: %s", text); //&s is for characters
+    // printf("MODE=%d\n", mode);
+    // printf("SHIFT=%d", count);
 
-    // if(mode == 0)
-    // {
-        
-    // }
-    // else
-    // {
+                        //null terminator
+                        //       v
+    for (int i = 0; text[i] != '\0'; i++) {
+        char c = text[i];
 
-    // }
+        if (isalpha(c)) {
+            char base; // for upper / lower case detection
+            int shift = count;
 
-    // for (int i = 0; i < count; i++) {
-    //     printf("%d\n", i);
-    // }
+            if (mode == 1) {
+                shift = -count;
+            }
+
+            if (isupper(c)) {
+                base = 'A';
+            } else {
+                base = 'a';
+            }
+
+            int shifted = (c - base + shift) % 26; // not so secret formula from mr caesar
+
+            if (shifted < 0) {
+                shifted += 26;
+            }
+            
+            text[i] = shifted + base;
+        }
+    }
+
+    printf("RESULT: %s\n", text);
 }
 
 int main() {
-
-    // we need to ask the user for the mode (encrypt / decrypt)
-    // then set that mode and ask them for the text
-    // we then ask for the shift number (default 3) 
-    // then we shift each letter in the given text by the entered shift
-    // lastly we return the text
-
     int mode; // 0 = encrypt, 1 = decrypt
     int shift_count;
-    char text[100];
+    char text[1000]; // sets a fixed limit of 999 characters, will def replace with dynamic allocation later
 
     do {
         printf("\e[1;1H\e[2J"); // clear the console
@@ -49,7 +60,7 @@ int main() {
     } while (shift_count < 1 || shift_count > 25);
 
     printf("Enter some text: ");
-    fgets(text, 100, stdin);
+    fgets(text, 1000, stdin);
 
     perform_shift(shift_count, text, mode);
 
